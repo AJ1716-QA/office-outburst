@@ -17,30 +17,68 @@ for(let x=-10;x<=10;x+=5){box(scene,x,2,-11.8,4.5,2.7,.06,0xb9d6e3)}
 function desk(x,z){box(scene,x,.72,z,2.3,.16,1.1,0x80583e);for(const dx of [-.95,.95])for(const dz of [-.38,.38])box(scene,x+dx,.34,z+dz,.09,.68,.09,0x384451);box(scene,x,.99,z-.15,.68,.06,.4,0x8bb0bd);box(scene,x+.7,.94,z+.12,.35,.06,.28,0x252c35)}
 desk(-5,-3);desk(5,-3);desk(-5,4);desk(5,4);
 function person(shirt,pants,skin=0xe8b995){
- const g=new THREE.Group(),shirtMat=mat(shirt),pantsMat=mat(pants),skinMat=mat(skin),shoeMat=mat(0x202630),dark=mat(0x202630);
- const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.37,.62,6,12),shirtMat);torso.position.y=1.22;torso.castShadow=true;g.add(torso);
- const neck=new THREE.Mesh(new THREE.CylinderGeometry(.105,.13,.2,12),skinMat);neck.position.y=1.72;g.add(neck);
+ const g=new THREE.Group(),shirtMat=mat(shirt),pantsMat=mat(pants),skinMat=mat(skin),shoeMat=mat(0x202630),dark=mat(0x202630),hairMat=mat(shirt===0x9b5a91?0x25212b:0x30251f),isRival=shirt===0x9b5a91;
+ const addMesh=(geo,material,parent,pos,scale)=>{const m=new THREE.Mesh(geo,material);m.position.set(...pos);if(scale)m.scale.set(...scale);m.castShadow=true;parent.add(m);return m};
+ const torso=addMesh(new THREE.CapsuleGeometry(.37,.62,7,14),shirtMat,g,[0,1.22,0]);
+ const neck=addMesh(new THREE.CylinderGeometry(.105,.13,.2,12),skinMat,g,[0,1.72,0]);
  const headGroup=new THREE.Group();headGroup.position.y=1.98;g.add(headGroup);
- const head=new THREE.Mesh(new THREE.SphereGeometry(.32,20,16),skinMat);head.scale.set(1,.98,.9);head.castShadow=true;headGroup.add(head);
- const hair=new THREE.Mesh(new THREE.SphereGeometry(.337,18,12,0,Math.PI*2,0,Math.PI*.52),mat(0x30251f));hair.position.y=.095;hair.rotation.x=-.08;headGroup.add(hair);
- const fringe=new THREE.Mesh(new THREE.SphereGeometry(.19,14,8),mat(0x30251f));fringe.scale.set(1,.42,.72);fringe.position.set(0,.18,.23);headGroup.add(fringe);
- for(const x of [-.12,.12]){const eye=new THREE.Mesh(new THREE.SphereGeometry(.043,10,8),dark);eye.position.set(x,-.015,.278);headGroup.add(eye);const brow=new THREE.Mesh(new THREE.BoxGeometry(.095,.025,.025),mat(0x392a24));brow.position.set(x,.075,.28);headGroup.add(brow)}
- const nose=new THREE.Mesh(new THREE.SphereGeometry(.045,8,8),skinMat);nose.scale.set(.8,.8,.8);nose.position.set(0,-.09,.3);headGroup.add(nose);
- const mouth=new THREE.Mesh(new THREE.BoxGeometry(.105,.018,.018),mat(0x754b48));mouth.position.set(0,-.17,.277);headGroup.add(mouth);
- const collar=box(g,0,1.61,.22,.34,.12,.08,0xe7e9ed);
- const tie=box(g,0,1.32,.365,.105,.42,.045,0xb64c43);tie.rotation.x=-.08;
+ addMesh(new THREE.SphereGeometry(.32,24,18),skinMat,headGroup,[0,0,0],[1,.98,.9]);
+ // Ears and face details
+ for(const side of [-1,1]){
+  addMesh(new THREE.SphereGeometry(.085,12,10),skinMat,headGroup,[side*.305,-.015,0],[.72,1,.65]);
+  addMesh(new THREE.SphereGeometry(.043,10,8),mat(0x9b6660),headGroup,[side*.326,-.015,.018],[.55,.7,.5]);
+ }
+ const hair=addMesh(new THREE.SphereGeometry(.337,20,14,0,Math.PI*2,0,Math.PI*.54),hairMat,headGroup,[0,.095,-.005],[1,1,.96]);
+ const fringe=addMesh(new THREE.SphereGeometry(.19,16,10),hairMat,headGroup,[isRival?.06:0,.18,.23],[isRival?1.35:1,.42,.72]);
+ if(isRival){
+  addMesh(new THREE.SphereGeometry(.14,14,10),hairMat,headGroup,[-.22,.12,-.02],[.55,1.2,.8]);
+  addMesh(new THREE.SphereGeometry(.14,14,10),hairMat,headGroup,[.22,.12,-.02],[.55,1.2,.8]);
+ }
+ for(const x of [-.12,.12]){
+  addMesh(new THREE.SphereGeometry(.052,12,10),mat(0xf5f2e9),headGroup,[x,-.015,.278]);
+  addMesh(new THREE.SphereGeometry(.027,10,8),mat(0x34495e),headGroup,[x,-.018,.319]);
+  addMesh(new THREE.SphereGeometry(.012,8,8),mat(0x111820),headGroup,[x,-.018,.338]);
+  const brow=addMesh(new THREE.BoxGeometry(.105,.027,.03),hairMat,headGroup,[x,.078,.28]);
+  brow.rotation.z=isRival?(x<0?.18:-.18):(x<0?-.08:.08);
+ }
+ addMesh(new THREE.SphereGeometry(.048,10,8),skinMat,headGroup,[0,-.09,.3],[.8,.9,.8]);
+ const mouth=addMesh(new THREE.BoxGeometry(.11,.025,.02),mat(isRival?0x512e32:0x754b48),headGroup,[0,-.17,.278]);
+ if(isRival){
+  // Slightly smug smile and rectangular office glasses
+  mouth.scale.x=1.25;
+  const frame=mat(0x202a34);
+  for(const x of [-.12,.12])addMesh(new THREE.BoxGeometry(.15,.105,.025),frame,headGroup,[x,-.005,.345]);
+  addMesh(new THREE.BoxGeometry(.09,.022,.02),frame,headGroup,[0,.005,.345]);
+ }
+ // Shirt collar, tie, buttons and employee ID
+ addMesh(new THREE.BoxGeometry(.17,.12,.08),mat(0xf0f1ed),g,[-.105,1.61,.23]);
+ addMesh(new THREE.BoxGeometry(.17,.12,.08),mat(0xf0f1ed),g,[.105,1.61,.23]);
+ const tie=addMesh(new THREE.BoxGeometry(.105,.4,.045),mat(isRival?0xd2a84b:0x4c88a6),g,[0,1.34,.36]);tie.rotation.x=-.08;
+ for(let y=1.22;y>1.02;y-=.1)addMesh(new THREE.SphereGeometry(.018,8,6),mat(0xe9e7dc),g,[.12,y,.355]);
+ addMesh(new THREE.BoxGeometry(.17,.2,.035),mat(0x253b50),g,[.245,1.31,.29]);
+ addMesh(new THREE.BoxGeometry(.105,.115,.025),mat(0xe5e9ec),g,[.245,1.33,.315]);
+ addMesh(new THREE.BoxGeometry(.07,.025,.028),mat(0x8eafbd),g,[.245,1.27,.316]);
+ // Arms, articulated forearms and hands with simple fingers
  const limbs={};
  for(const side of [-1,1]){
   const arm=new THREE.Group();arm.position.set(side*.39,1.48,0);g.add(arm);limbs[side<0?'leftArm':'rightArm']=arm;
-  const upper=new THREE.Mesh(new THREE.CapsuleGeometry(.105,.36,4,8),shirtMat);upper.position.y=-.22;upper.rotation.z=side*-.12;arm.add(upper);
-  const elbow=new THREE.Mesh(new THREE.SphereGeometry(.095,10,8),skinMat);elbow.position.y=-.44;arm.add(elbow);
-  const fore=new THREE.Mesh(new THREE.CapsuleGeometry(.082,.3,4,8),shirtMat);fore.position.set(0,-.59,.025);arm.add(fore);
-  const hand=new THREE.Mesh(new THREE.SphereGeometry(.105,12,10),skinMat);hand.position.set(0,-.79,.05);arm.add(hand);
+  addMesh(new THREE.CapsuleGeometry(.105,.36,5,10),shirtMat,arm,[0,-.22,0]);
+  addMesh(new THREE.SphereGeometry(.095,12,10),skinMat,arm,[0,-.44,0]);
+  addMesh(new THREE.CapsuleGeometry(.082,.3,5,10),shirtMat,arm,[0,-.59,.025]);
+  addMesh(new THREE.SphereGeometry(.105,14,10),skinMat,arm,[0,-.79,.05],[1,.9,1]);
+  for(let finger=0;finger<3;finger++)addMesh(new THREE.CapsuleGeometry(.018,.055,3,6),skinMat,arm,[(finger-1)*.045,-.865,.09]);
+  addMesh(new THREE.BoxGeometry(.23,.075,.09),mat(isRival?0x333743:0x34495e),arm,[0,-.53,.025]);
   const leg=new THREE.Group();leg.position.set(side*.19,.79,0);g.add(leg);limbs[side<0?'leftLeg':'rightLeg']=leg;
-  const thigh=new THREE.Mesh(new THREE.CapsuleGeometry(.13,.38,4,8),pantsMat);thigh.position.y=-.23;leg.add(thigh);
-  const shin=new THREE.Mesh(new THREE.CapsuleGeometry(.105,.35,4,8),pantsMat);shin.position.y=-.59;leg.add(shin);
-  const shoe=new THREE.Mesh(new THREE.BoxGeometry(.23,.13,.38),shoeMat);shoe.position.set(0,-.82,.09);leg.add(shoe);
+  addMesh(new THREE.CapsuleGeometry(.13,.38,5,10),pantsMat,leg,[0,-.23,0]);
+  addMesh(new THREE.CapsuleGeometry(.105,.35,5,10),pantsMat,leg,[0,-.59,0]);
+  addMesh(new THREE.BoxGeometry(.24,.14,.4),shoeMat,leg,[0,-.82,.09]);
+  addMesh(new THREE.BoxGeometry(.245,.035,.405),mat(0x69727b),leg,[0,-.89,.09]);
+  addMesh(new THREE.BoxGeometry(.12,.035,.045),mat(0x9ca6ad),leg,[0,-.79,.29]);
  }
+ // Distinct office-rival accessory: a dark belt and a bright gold staff pin
+ addMesh(new THREE.BoxGeometry(.66,.07,.39),mat(0x343b45),g,[0,.91,0]);
+ addMesh(new THREE.BoxGeometry(.1,.09,.035),mat(0xc2a15c),g,[0,.91,.205]);
+ if(isRival)addMesh(new THREE.SphereGeometry(.055,12,10),mat(0xd6ae54),g,[.29,1.55,.13]);
  g.userData.limbs=limbs;g.userData.head=headGroup;return g
 }
 const player=person(0x2c78a5,0x26374b);player.position.set(0,0,7);scene.add(player);const target=person(0x9b5a91,0x343b49,0xd9a27d);target.position.set(0,0,-3.7);scene.add(target);
