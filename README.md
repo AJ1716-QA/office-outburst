@@ -10,6 +10,7 @@ An original 3D cartoon office action-comedy game prototype.
 - Mobile virtual joystick
 - Paper-ball throwing, a moving coworker target, dodge reactions, and target scoring
 - Rage meter, taunt button, direct-hit counter, and five-hit mission completion
+- Interactive coffee machine, printer, and water cooler with one-time mission rewards (press E or tap INTERACT)
 - Mobile joystick input separated from camera-drag input, plus a throw cooldown
 - PWA manifest, custom SVG app icon, and lightweight service worker shell cache (the 3D engine still needs internet)
 
