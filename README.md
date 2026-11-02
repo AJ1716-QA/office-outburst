@@ -9,7 +9,9 @@ An original 3D cartoon office action-comedy game prototype.
 - Mouse-drag camera turning
 - Mobile virtual joystick
 - Paper-ball throwing and target scoring
-- Rage meter, taunt button, and mission completion state
+- Rage meter, taunt button, direct-hit counter, and five-hit mission completion
+- Mobile joystick input separated from camera-drag input, plus a throw cooldown
+- PWA manifest, custom SVG app icon, and lightweight service worker shell cache (the 3D engine still needs internet)
 
 ## Run locally
 
