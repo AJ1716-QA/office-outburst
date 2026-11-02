@@ -1,4 +1,4 @@
-const CACHE="office-outburst-shell-v2";
+const CACHE="office-outburst-shell-v3";
 const ENGINE="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
 const SHELL=["./","./index.html","./manifest.webmanifest","./icon.svg"];
 self.addEventListener("install",event=>{
