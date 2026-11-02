@@ -1,0 +1,19 @@
+{
+  "name": "OFFICE OUTBURST",
+  "short_name": "Outburst",
+  "description": "A 3D cartoon office action-comedy game.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#101827",
+  "theme_color": "#101827",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
