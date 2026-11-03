@@ -7,8 +7,17 @@ from mathutils import Vector
 # parts to appropriate bones. This is a blockout rig, not production skinning.
 
 scene = bpy.context.scene
-if not bpy.data.objects.get("Rival head"):
-    raise RuntimeError("Rival model not found. Run office_outburst_rival_v1.py first.")
+# Do not depend on one exact object name: Blender may append .001 or the
+# user may rename the head. Confirm the character is present by its mesh count.
+character_meshes = [
+    obj for obj in scene.objects
+    if obj.type == "MESH" and obj.name != "Floor"
+]
+if len(character_meshes) < 10:
+    raise RuntimeError(
+        "Rival model not found in this scene. Open the saved rival character "
+        "project first, then run this rig script in that same scene."
+    )
 
 # Remove an earlier generated rig if this script is rerun.
 old = bpy.data.objects.get("Rival_Rig")
